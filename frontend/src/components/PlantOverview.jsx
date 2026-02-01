@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { HelpCircle, ChevronDown, Wifi, WifiOff } from 'lucide-react';
-import { usePlantStream } from '../api/solarApi';
+import { usePlantStream, fetchPerformanceRatioData } from '../api/solarApi';
 
 export function PlantOverview({ plantId = 1, plantName = "Sunfield Alpha", plantLocation = "Arizona, USA" }) {
   const { data, error, isConnected } = usePlantStream(plantId);
@@ -16,8 +16,7 @@ export function PlantOverview({ plantId = 1, plantName = "Sunfield Alpha", plant
   useEffect(() => {
     async function fetchPRData() {
       try {
-        const response = await fetch('http://localhost:3001/api/charts/performance-ratio');
-        const data = await response.json();
+        const data = await fetchPerformanceRatioData();
         setPrData(data);
       } catch (err) {
         console.error('Failed to fetch PR data:', err);

@@ -340,17 +340,27 @@ function broadcastUpdate() {
 }
 
 // Start auto-simulation - updates every 3 seconds to simulate real-time data
+// Only run locally (won't work on Vercel serverless)
 const SIMULATION_INTERVAL = 3000; // 3 seconds
-setInterval(broadcastUpdate, SIMULATION_INTERVAL);
 
-console.log(`Auto-simulation running every ${SIMULATION_INTERVAL / 1000} seconds`);
+if (!process.env.VERCEL) {
+  setInterval(broadcastUpdate, SIMULATION_INTERVAL);
+  console.log(`Auto-simulation running every ${SIMULATION_INTERVAL / 1000} seconds`);
+}
 
 // ============================================
 // SERVER START
 // ============================================
 
-app.listen(PORT, () => {
-  console.log(`
+// For local development, start the server
+// For Vercel, export the app
+if (process.env.VERCEL) {
+  // Running on Vercel - export the app
+  console.log('Running on Vercel serverless');
+} else {
+  // Running locally - start the server
+  app.listen(PORT, () => {
+    console.log(`
 ╔════════════════════════════════════════════════════════════╗
 ║                                                            ║
 ║     🌞 Solar Analytics Backend Server                      ║
@@ -382,11 +392,15 @@ app.listen(PORT, () => {
 ║     • GET  /api/simulation/status  - Current status        ║
 ║                                                            ║
 ╚════════════════════════════════════════════════════════════╝
-  `);
-  
-  if (!process.env.GEMINI_API_KEY) {
-    console.log('⚠️  Warning: GEMINI_API_KEY not set. Add it to .env file for AI chat to work.');
-  } else {
-    console.log('✅ Gemini AI configured and ready');
-  }
-});
+    `);
+    
+    if (!process.env.GEMINI_API_KEY) {
+      console.log('⚠️  Warning: GEMINI_API_KEY not set. Add it to .env file for AI chat to work.');
+    } else {
+      console.log('✅ Gemini AI configured and ready');
+    }
+  });
+}
+
+// Export for Vercel serverless
+export default app;
