@@ -1,9 +1,9 @@
 import { useState, useEffect } from 'react';
 import { AreaChart, Area, LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { HelpCircle, ChevronDown, Wifi, WifiOff } from 'lucide-react';
+import { HelpCircle, ChevronDown, Wifi, WifiOff, Download } from 'lucide-react';
 import { usePlantStream, fetchPerformanceRatioData } from '../api/solarApi';
 
-export function PlantOverview({ plantId = 1, plantName = "Sunfield Alpha", plantLocation = "Arizona, USA" }) {
+export function PlantOverview({ plantId = 1, plantName = "Sunfield Alpha", plantLocation = "Arizona, USA", onExportPDF }) {
   const { data, error, isConnected } = usePlantStream(plantId);
   
   // Extract data from stream
@@ -57,6 +57,18 @@ export function PlantOverview({ plantId = 1, plantName = "Sunfield Alpha", plant
           </div>
           <div className="flex items-center gap-3">
             <span className="text-sm text-[#6b7280]">{plant.name || plantName} • {plant.location || plantLocation}</span>
+            <button 
+              onClick={() => onExportPDF && onExportPDF({ 
+                plant: { name: plant.name || plantName, location: plant.location || plantLocation },
+                kpis,
+                powerChartData
+              })}
+              disabled={!data}
+              className="px-4 py-2 bg-white border border-[#e5e7eb] text-[#1a1a1f] rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-4 h-4" />
+              Export PDF
+            </button>
             <button className="px-4 py-2 bg-[#e87722] text-white rounded-lg text-sm hover:bg-[#d66815] transition-colors">
               Maintenance
             </button>

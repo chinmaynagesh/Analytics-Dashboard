@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
-import { HelpCircle, ChevronLeft, ChevronRight, Plus, Wifi, WifiOff } from 'lucide-react';
+import { HelpCircle, ChevronLeft, ChevronRight, Plus, Wifi, WifiOff, Download } from 'lucide-react';
 import { useDashboardStream } from '../api/solarApi';
 
-export function Dashboard() {
+export function Dashboard({ onExportPDF }) {
   const { data, error, isConnected } = useDashboardStream();
   
   // Extract data from stream
@@ -45,10 +45,20 @@ export function Dashboard() {
               )}
             </div>
           </div>
-          <button className="px-4 py-2 bg-[#1a1a1f] text-white rounded-lg text-sm hover:bg-[#2a2a35] transition-colors flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Plant
-          </button>
+          <div className="flex items-center gap-2">
+            <button 
+              onClick={() => onExportPDF && onExportPDF({ plants, kpis })}
+              disabled={!data}
+              className="px-4 py-2 bg-white border border-[#e5e7eb] text-[#1a1a1f] rounded-lg text-sm hover:bg-gray-50 transition-colors flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Download className="w-4 h-4" />
+              Export PDF
+            </button>
+            <button className="px-4 py-2 bg-[#1a1a1f] text-white rounded-lg text-sm hover:bg-[#2a2a35] transition-colors flex items-center gap-2">
+              <Plus className="w-4 h-4" />
+              Add Plant
+            </button>
+          </div>
         </div>
       </header>
 
